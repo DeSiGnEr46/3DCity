@@ -36,7 +36,7 @@
 	  this.cameray_prev = 200;
 	  this.cameraz_prev = 600;
 	  this.colormesh = 0xff0000;
-	  this.colorlight = 0xffffff;
+	  this.colorlight = 0xffafaf;
 	  this.color2 = 0x0000ff;
     this.poslight_x = 0;
     this.poslight_y = 200;
@@ -68,35 +68,44 @@
 
   var geometry_sky = new THREE.BoxGeometry(900, 900, 900);
 
-  //Textura de los edificios
-  var mapUrl = "building_text3.jpg"; //Mapa de normales del edificio
-  var maptext = new THREE.TextureLoader().load( mapUrl );
-  maptext.repeat.set( 1, 6 ); //Repetimos la textura 6 veces en vertical y una en horizontal
-  maptext.wrapT = THREE.RepeatWrapping;	//Indicamos el modo repeat
+  //Texturas de los edificios
+  var textUrls = ["building_text1.jpg","building_text2.jpg","building_text3.jpg"]; //Texturas de los edificios
+  var mapUrl = ["building_text1_specular.png","building_text2_specular.png","building_text3_specular.png"];//Mapa de normales de los edificios
+
+  var maptextList = [];
+  for(var i = 0; i < 3; i++){
+    var aux = new THREE.TextureLoader().load( textUrls[i] );
+    aux.repeat.set( 1, 6 ); //Repetimos la textura 6 veces en vertical y una en horizontal
+    aux.wrapT = THREE.RepeatWrapping;	//Indicamos el modo repeat
+    maptextList.push(aux)
+  }
 
   //Material de los edificios
-  var mapUrl = "building_text3_specular.png";
-  var map_norm = new THREE.TextureLoader().load(mapUrl);
-
-  var material = new THREE.MeshPhongMaterial( { map: maptext } );
-  material.normalMap = map_norm;
-  material.normalMap.repeat.set( 1, 6 );
-  material.normalMap.wrapS = material.normalMap.wrapT = THREE.RepeatWrapping
-
-  //var material = new THREE.MeshLambertMaterial( {color: controls.colormesh});
+  var matList = [];
+  for(var i = 0; i < 3; i++){
+    var map_norm = new THREE.TextureLoader().load(mapUrl[i]);
+    var material = new THREE.MeshPhongMaterial( { map: maptextList[i] } );
+    material.normalMap = map_norm;
+    material.normalMap.repeat.set( 1, 6 );
+    material.normalMap.wrapS = material.normalMap.wrapT = THREE.RepeatWrapping
+    matList.push(material)
+  }
 
   for (var i = -4; i < 5; i++){
     for (var j = -4; j < 5; j++) {
+        //Se crea la geometría del edificio con una altura aleatoria
         var height = Math.random() * 750;
         var geom2 = geometry_building = new THREE.BoxGeometry( 40, height , 40 );
-        var mesh2 = new THREE.Mesh(geom2, material);
+
+        //Se crea el material con una de las texturas aleatorias
+        var mesh2 = new THREE.Mesh(geom2, matList[Math.floor(Math.random() * 3)]);
         mesh2.position.set(j*80, -(450 - height/2), i*80);
         scene.add(mesh2);
     }
   }
 
   var light_point = new THREE.PointLight(controls.colorlight, 1);
-	var sunMat = new THREE.MeshBasicMaterial({color: 'yellow'});
+	var sunMat = new THREE.MeshBasicMaterial({color: 'red'});
   var sunGeom = new THREE.SphereGeometry(10, 16, 8);
   sun = new THREE.Mesh(sunGeom, sunMat);
 	sun.add(light_point);
@@ -134,20 +143,20 @@
   var controlz = f1.add(controls, 'cameraz', -900,900).onChange(controls.updateCamz);
   f1.add(controls, 'cualcamera', {Perspective: 0, Ortographic: 1});
 
-  // var f2 = gui.addFolder('Colors');
-  // f2.addColor(controls, 'colormesh').onChange(controls.updateMat);
-  // f2.addColor(controls, 'colorlight').onChange(controls.updateLight);;
+  var f2 = gui.addFolder('Colors');
+  f2.addColor(controls, 'colormesh').onChange(controls.updateMat);
+  f2.addColor(controls, 'colorlight').onChange(controls.updateLight);;
 
   var f3 = gui.addFolder('Point Light position');
   f3.add(controls, 'poslight_x', -900,900);
-  // f3.add(controls, 'poslight_y', -900,900);
+  f3.add(controls, 'poslight_y', -900,900);
   f3.add(controls, 'poslight_z', -900,900);
 
 
 
 
   f1.open();
-  // f2.open();
+  f2.open();
   f3.open();
 
   function render() {
