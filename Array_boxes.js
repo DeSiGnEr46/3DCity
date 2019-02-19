@@ -15,7 +15,7 @@
   // This camera will provide a perspective projection
   // Arguments are (fov, aspect, near_plane, far_plane)
 
-  var camera = new THREE.PerspectiveCamera(70, 1024/768, 0.1, 1200);
+  var camera = new THREE.PerspectiveCamera(70, 1024/768, 0.1, 2000);
   var camera2 = new THREE.OrthographicCamera(-1024/2 , 1024/2, 768/2, -768/2, 0.1, 1200);
 
 	// Create the controller to move camera with mouse
@@ -66,17 +66,16 @@
 
   }
 
-  var geometry_sky = new THREE.BoxGeometry(1000, 1000, 1000);
-  var geometry_building = new THREE.BoxGeometry( 40, 520, 40 );
+  var geometry_sky = new THREE.BoxGeometry(900, 900, 900);
 
   //Textura de los edificios
-  var mapUrl = "UV_Grid_Sm.jpg";
+  var mapUrl = "building_text3.jpg"; //Mapa de normales del edificio
   var maptext = new THREE.TextureLoader().load( mapUrl );
   maptext.repeat.set( 1, 6 ); //Repetimos la textura 6 veces en vertical y una en horizontal
   maptext.wrapT = THREE.RepeatWrapping;	//Indicamos el modo repeat
 
   //Material de los edificios
-  var mapUrl = "wotig-normal.png";
+  var mapUrl = "building_text3_specular.png";
   var map_norm = new THREE.TextureLoader().load(mapUrl);
 
   var material = new THREE.MeshPhongMaterial( { map: maptext } );
@@ -88,9 +87,10 @@
 
   for (var i = -4; i < 5; i++){
     for (var j = -4; j < 5; j++) {
-        var geom2 = geometry_building.clone();
+        var height = Math.random() * 750;
+        var geom2 = geometry_building = new THREE.BoxGeometry( 40, height , 40 );
         var mesh2 = new THREE.Mesh(geom2, material);
-        mesh2.position.set(j*80, -240, i*80);
+        mesh2.position.set(j*80, -(450 - height/2), i*80);
         scene.add(mesh2);
     }
   }
@@ -134,20 +134,20 @@
   var controlz = f1.add(controls, 'cameraz', -900,900).onChange(controls.updateCamz);
   f1.add(controls, 'cualcamera', {Perspective: 0, Ortographic: 1});
 
-  var f2 = gui.addFolder('Colors');
-  f2.addColor(controls, 'colormesh').onChange(controls.updateMat);
-  f2.addColor(controls, 'colorlight').onChange(controls.updateLight);;
+  // var f2 = gui.addFolder('Colors');
+  // f2.addColor(controls, 'colormesh').onChange(controls.updateMat);
+  // f2.addColor(controls, 'colorlight').onChange(controls.updateLight);;
 
   var f3 = gui.addFolder('Point Light position');
   f3.add(controls, 'poslight_x', -900,900);
-  f3.add(controls, 'poslight_y', -900,900);
+  // f3.add(controls, 'poslight_y', -900,900);
   f3.add(controls, 'poslight_z', -900,900);
 
 
 
 
   f1.open();
-  f2.open();
+  // f2.open();
   f3.open();
 
   function render() {
