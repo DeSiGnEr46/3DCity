@@ -66,7 +66,7 @@
 
   }
 
-  var geometry_sky = new THREE.BoxGeometry(900, 900, 900);
+  var geometry_sky = new THREE.BoxGeometry(1000, 1000, 1000);
 
   //Texturas de los edificios
   var textUrls = ["building_text1.jpg","building_text2.jpg","building_text3.jpg"]; //Texturas de los edificios
@@ -99,7 +99,7 @@
 
         //Se crea el material con una de las texturas aleatorias
         var mesh2 = new THREE.Mesh(geom2, matList[Math.floor(Math.random() * 3)]);
-        mesh2.position.set(j*80, -(450 - height/2), i*80);
+        mesh2.position.set(j*80, -(500 - height/2), i*80);
         scene.add(mesh2);
     }
   }
